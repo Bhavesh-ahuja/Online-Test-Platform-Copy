@@ -88,7 +88,7 @@ export const getTestById = async (req, res) => {
 
 export const submitTest = async (req, res) => {
     const { id } = req.params;  //Test ID
-    const { answers } = req.body;  // { "questionId": "selectedAnswer", ... }
+    const { answers, status } = req.body;  // { "questionId": "selectedAnswer", ... }
     const studentId = req.user.userId;
 
     try {
@@ -121,6 +121,7 @@ export const submitTest = async (req, res) => {
         const submission = await prisma.testSubmission.create({
             data: {
                 score: score,
+                status: status || 'COMPLETED',  //Default to completed if missing
                 studentId: studentId,
                 testId: parseInt(id),
                 answers: {
@@ -163,12 +164,46 @@ export const getTestResult = async (req, res) => {
     });
 
     // Security Check: Make sure the user is not trying to see someone else's results
-    if (!submission || submission.studentId !== studentId) {
+    if (!submission || (submission.studentId !== studentId  && req.user.role !=='ADMIN')) {
       return res.status(404).json({ error: 'Submission not found' });
     }
 
     res.json(submission);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch results' });
+  }
+};
+
+export const getMySubmissions = async (req, res) => {
+  const studentId = req.user.userId;
+  try {
+    const submissions = await prisma.testSubmission.findMany({
+      where: { studentId: studentId },
+      include: {
+        test: { select: { title: true, _count: { select: { questions: true } } } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json(submissions);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch submissions' });
+  }
+};
+
+
+export const getTestSubmissions = async (req, res) => {
+  const { id } = req.params; // Test ID
+
+  try {
+    const submissions = await prisma.testSubmission.findMany({
+      where: { testId: parseInt(id) },
+      include: {
+        student: { select: { email: true, id: true } }, // Get student info
+      },
+      orderBy: { score: 'desc' } // Default sort by score
+    });
+    res.json(submissions);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch submissions' });
   }
 };
