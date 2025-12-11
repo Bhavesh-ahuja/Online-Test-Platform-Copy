@@ -9,7 +9,7 @@ const MAX_WARNINGS = 3; // Auto-submit after 3 tab switches
 
 // Fisher-Yates Shuffle Algorithm
 // Takes an array and returns a New shuffled array
-function shuffledArray(array) {
+function shuffleArray(array) {
   const shuffled = [...array];   //Create a copy
   for (let i = shuffled.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
@@ -55,7 +55,7 @@ function WarningBanner({ count }) {
 
   return (
     <div
-      className="bg-red-100 border-1-4 border-red-500 text-red-700 p-4 mb-6 mx-auto max-w-3xl mt-4"
+      className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 mx-auto max-w-3xl mt-4"
       role="alert"
     >
       <p className="font-bold">Warning!</p>
@@ -108,7 +108,7 @@ function TestPage() {
 
         // Shuffle Questions
         if (data.questions && Array.isArray(data.questions)) {
-          data.questions = shuffledArray(data.questions);
+          data.questions = shuffleArray(data.questions);
         }
 
         setTest(data);
@@ -133,7 +133,7 @@ function TestPage() {
   /* --------------------------------------------------------
      3. Submit handler
   ---------------------------------------------------------*/
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (status = 'COMPLETED') => {
     if (loading) return;
 
     const token = localStorage.getItem('token');
@@ -146,7 +146,7 @@ function TestPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ answers, status: status }),  //Send the answer and status to backend
       });
 
       const data = await response.json();
@@ -177,7 +177,7 @@ function TestPage() {
   useEffect(() => {
     if (timeLeft === 0) {
       alert("Time's up! Submitting your test...");
-      handleSubmit();
+      handleSubmit('TIMEOUT');  //Send TIMEOUT status
     }
   }, [timeLeft, handleSubmit]);
 
@@ -193,7 +193,7 @@ function TestPage() {
 
         if (updated >= MAX_WARNINGS) {
           alert('Violation Limit Reached. Test Terminated');
-          handleSubmit();
+          handleSubmit('TERMINATED');  //Send TERMINATED status
         } else {
           alert('Warning: Tab switch detected! After 3 switches, the test will auto-submit.');
         }
@@ -251,7 +251,7 @@ function TestPage() {
         <form
           onSubmit={e => {
             e.preventDefault();
-            handleSubmit();
+            handleSubmit('COMPLETED');
           }}
         >
           <div className="space-y-6">
