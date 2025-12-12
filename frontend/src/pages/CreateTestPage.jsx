@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../config'; 
+import { API_BASE_URL} from '../../config'; 
 
 function CreateTestPage() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ function CreateTestPage() {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch('API_BASE_URL/api/tests', {
+      const response = await fetch(`${API_BASE_URL}/api/tests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

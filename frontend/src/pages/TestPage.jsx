@@ -98,7 +98,7 @@ function TestPage() {
       if (!token) return navigate('/login');
 
       try {
-        const response = await fetch(`API_BASE_URL/api/tests/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/tests/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
