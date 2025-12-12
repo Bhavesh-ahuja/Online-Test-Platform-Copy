@@ -17,7 +17,7 @@ function AdminResultsPage() {
       if (!token) return navigate('/login');
 
       try {
-        const response = await fetch(`API_BASE_URL/api/tests/${id}/submissions`, {
+        const response = await fetch(`${API_BASE_URL}/api/tests/${id}/submissions`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 

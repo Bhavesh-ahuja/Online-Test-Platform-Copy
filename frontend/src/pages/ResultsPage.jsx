@@ -18,7 +18,7 @@ function ResultsPage() {
       }
 
       try {
-        const response = await fetch(`API_BASE_URL/api/tests/results/${submissionId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/tests/results/${submissionId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
