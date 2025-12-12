@@ -7,6 +7,10 @@ function DashboardPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Check role
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isAdmin = user.role === 'ADMIN';
+
   // This "Effect" runs when the component loads
   useEffect(() => {
     const fetchTests = async () => {
@@ -55,6 +59,10 @@ function DashboardPage() {
               <span>❓ {test._count?.questions || 0} Questions</span>
             </div>
             <Link to={`/test/${test.id}`} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-center"> Take Test </Link>
+            {/* only if admin */}
+            {isAdmin && (
+              <Link to={`/tests/${test.id}/admin-results`} className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900 transition text-center border border-gray-600">View Student Result</Link>
+            )}
           </div>
         ))}
 

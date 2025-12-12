@@ -12,6 +12,8 @@ import DashboardPage from './pages/DashboardPage';
 import CreateTestPage from './pages/CreateTestPage';
 import TestPage from './pages/TestPage';
 import ResultsPage from './pages/ResultsPage';
+// import MyResultsPage from './pages/MyResultsPage';
+import AdminResultsPage from './pages/AdminResultsPage';
 
 function App() {
   return (
@@ -32,6 +34,11 @@ function App() {
             {/* Dynamic Routes */}
             <Route path="/test/:id" element={<TestPage />}/>
             <Route path="results/:submissionId" element={<ResultsPage />} />
+
+            {/* <Route path="/my-results" element={<MyResultsPage />} /> */}
+
+            <Route path="/tests/:id/admin-results" element={<AdminResultsPage />} /> 
+
           </Routes>
         </main>
       </div>
